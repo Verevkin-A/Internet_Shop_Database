@@ -4,15 +4,15 @@ CREATE TABLE customer (
     surname       VARCHAR(42) NOT NULL,
     birthdate     DATE,
     password      VARCHAR(256) NOT NULL
-        CHECK(REGEXP_LIKE(password, '^[a-zA-Z0-9.!#$%&*+-/=?^_`{|}~]*$', 'i')),
+        CHECK (REGEXP_LIKE(password, '^[a-zA-Z0-9.!#$@%&*+-/=?^_`{|}~]*$', 'i')),
     street        VARCHAR(42) NOT NULL,
     city          VARCHAR(42) NOT NULL,
     zip_code      VARCHAR(42) NOT NULL,
-    payment_info  INT NOT NULL
-        CHECK(MOD(payment_info, 16) = 0),
+    payment_info  NUMBER(16, 0) NOT NULL
+        CHECK (payment_info > 999999999999999),
     telephone_num INT NOT NULL,
     email         VARCHAR(256) NOT NULL
-        CHECK(REGEXP_LIKE(email, '^[a-zA-Z0-9.-]*@[a-zA-Z0-9-]+.[a-zA-Z]*$', 'i'))
+        CHECK (REGEXP_LIKE(email, '^[a-zA-Z0-9.-]*@[a-zA-Z0-9-]+.[a-zA-Z]*$', 'i'))
 );
 
 CREATE TABLE "ORDER" (
@@ -27,7 +27,7 @@ CREATE TABLE employee (
     name          VARCHAR(42) NOT NULL,
     surname       VARCHAR(42) NOT NULL,
     password      VARCHAR(256) NOT NULL
-        CHECK(REGEXP_LIKE(password, '^[a-zA-Z0-9.!#$%&*+-/=?^_`{|}~]*$', 'i'))
+        CHECK(REGEXP_LIKE(password, '^[a-zA-Z0-9.!#$@%&*+-/=?^_`{|}~]*$', 'i'))
 );
 
 CREATE TABLE cart (
@@ -69,7 +69,7 @@ INSERT INTO customer VALUES(9812241235, 'Daniel', 'Miller', TO_DATE('12/10/1999'
                             'Corney 2/3','Bright', '45662', 3575129315066200, 12124567890, 'miller@gmail.com');
 INSERT INTO customer VALUES(750905192, 'Emily', 'Jones', TO_DATE('24/03/2000', 'DD/MM/YYYY'), 'iD0#Tk#0W',
                             '12 Chantilly','Woodland', '8939', 2371219399056474, 4204829485826, 'jones@gmail.com');
-INSERT INTO customer VALUES(895913548, 'James', 'Taylor', TO_DATE('01/01/1991', 'DD/MM/YYYY'), '2j2@ks2l',
+INSERT INTO customer VALUES(895913547, 'James', 'Taylor', TO_DATE('01/01/1991', 'DD/MM/YYYY'), '2j2@ks2l',
                             'Blackhorse Grove 118','London', '21345', 1232933677494098, 323545000424, 'taylor@gmail.com');
 
 INSERT INTO "ORDER" VALUES(1, TO_DATE('12/03/2022', 'DD/MM/YYYY'), 'DELIVERED', 'SUKA');
