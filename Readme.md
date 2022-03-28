@@ -9,6 +9,8 @@
 - phone number: maybe some validations, at least positive number (> 0)
 - add normal invoice values on insertion
 - ALEKSANDR check regex
+- make UNIQUE user email, ?user mobile number, company id, vat id
+- drop tables at the start
 
 # For removing sequences folder:
 - drop table with PURGE option (DROP TABLE table_name PURGE)
