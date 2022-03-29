@@ -117,7 +117,7 @@ CREATE TABLE review (
     CONSTRAINT review_customer_foreign
         FOREIGN KEY (customer)
         REFERENCES customer (customer_id)
-        ON DELETE CASCADE,
+        ON DELETE SET NULL,
     CONSTRAINT review_product_foreign
         FOREIGN KEY (product)
         REFERENCES product (product_id)
