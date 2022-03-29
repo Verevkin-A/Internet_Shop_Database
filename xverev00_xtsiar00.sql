@@ -20,7 +20,8 @@ CREATE TABLE customer (
     zip_code      VARCHAR(70) NOT NULL,
     payment_info  NUMBER(16, 0) NOT NULL
         CHECK (payment_info > 999999999999999),
-    telephone_num INT NOT NULL,
+    telephone_num NUMERIC(15, 0) NOT NULL
+        CHECK (telephone_num > 99999999),
     email         VARCHAR(256) NOT NULL
         CHECK (REGEXP_LIKE (email, '^[a-z0-9.-]*@[a-z0-9-]+.[a-z]*$', 'i')) -- remove A-Z because of 'i'
 );
@@ -28,8 +29,8 @@ CREATE TABLE customer (
 --Create order table
 CREATE TABLE "ORDER" (
     order_id      INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    order_date    DATE NOT NULL,
-    status        VARCHAR(70) NOT NULL,
+    order_date    DATE DEFAULT CURRENT_DATE NOT NULL,
+    status        VARCHAR(70) DEFAULT 'PROCESSING' NOT NULL,
     invoice       VARCHAR(256) NOT NULL
 );
 
@@ -74,7 +75,7 @@ CREATE TABLE supplier (
 --Create review table
 CREATE TABLE review (
      review_num   INT GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
-     review_date  DATE NOT NULL,
+     review_date  DATE DEFAULT CURRENT_DATE NOT NULL,
      rating       INT NOT NULL
                     CHECK (rating >= 0 AND rating <= 5),
      content      VARCHAR(256)
@@ -83,27 +84,22 @@ CREATE TABLE review (
 --Insert values into created tables
 INSERT INTO customer(name, surname, birthdate, password, street, city, zip_code, payment_info, telephone_num, email)
 VALUES('Michael', 'Murphy', TO_DATE('07/05/1976', 'DD/MM/YYYY'), '11002003001', '9 Whitney', 'Smithtown', '117817',
-       4475219355076478, 12024561111, 'murphy@gmail.com');
+       4475219355076478, 420702003322, 'murphy@gmail.com');
 INSERT INTO customer(name, surname, birthdate, password, street, city, zip_code, payment_info, telephone_num, email)
 VALUES('Daniel', 'Miller', TO_DATE('12/10/1999', 'DD/MM/YYYY'), 'QWJmskE211', 'Corney 2/3','Bright', '45662',
-       3575129315066200, 12124567890, 'miller@gmail.com');
+       3575129315066200, 420774066577, 'miller@gmail.com');
 INSERT INTO customer(name, surname, birthdate, password, street, city, zip_code, payment_info, telephone_num, email)
 VALUES('Emily', 'Jones', TO_DATE('24/03/2000', 'DD/MM/YYYY'), 'iD0#Tk#0W', '12 Chantilly','Woodland', '8939',
        2371219399056474, 4204829485826, 'jones@gmail.com');
 INSERT INTO customer(name, surname, birthdate, password, street, city, zip_code, payment_info, telephone_num, email)
 VALUES('James', 'Taylor', TO_DATE('01/01/1991', 'DD/MM/YYYY'), '2j2@ks2l', 'Blackhorse Grove 118','London', '21345',
-       1232933677494098, 323545000424, 'taylor@gmail.com');
+       1232933677494098, 420601228345, 'taylor@gmail.com');
 -- TODO invoice values?
-INSERT INTO "ORDER"(order_date, status, invoice)
-VALUES(TO_DATE('12/03/2022', 'DD/MM/YYYY'), 'DELIVERED', 'BAD');
-INSERT INTO "ORDER"(order_date, status, invoice)
-VALUES(TO_DATE('17/03/2022', 'DD/MM/YYYY'), 'DELIVERED', 'WORDS');
-INSERT INTO "ORDER"(order_date, status, invoice)
-VALUES(TO_DATE('21/03/2022', 'DD/MM/YYYY'), 'DELIVERED', 'ARE');
-INSERT INTO "ORDER"(order_date, status, invoice)
-VALUES(TO_DATE('02/04/2022', 'DD/MM/YYYY'), 'DELIVERING', 'NOT');
-INSERT INTO "ORDER"(order_date, status, invoice)
-VALUES(TO_DATE('04/03/2022', 'DD/MM/YYYY'), 'IN PROGRESS', 'SUPPORTED');
+INSERT INTO "ORDER"(invoice) VALUES('BAD');
+INSERT INTO "ORDER"(invoice) VALUES('WORDS');
+INSERT INTO "ORDER"(status, invoice) VALUES('PROCESSED', 'ARE');
+INSERT INTO "ORDER"(status, invoice) VALUES('DELIVERING', 'NOT');
+INSERT INTO "ORDER"(status, invoice) VALUES('DELIVERED', 'SUPPORTED');
 
 INSERT INTO employee(name, surname, password) VALUES('Jack', 'Wilson', 'DOsmi42@s');
 INSERT INTO employee(name, surname, password) VALUES('Sophie', 'Rodriguez', 'qkjw11234j');
@@ -125,7 +121,7 @@ VALUES('A6 sketchbook Conda', 'A3 Heavyweight Hardcover Sketchbook, Ideal for Ki
 INSERT INTO supplier(supplier_name, street, city, zip_code, company_ID, VAT_ID)
  VALUES('Office SUP s.r.o', '59a Commercial St', 'Rothwell', '83294', '09354970', 'CZ123456789');
 
-INSERT INTO review(review_date, rating, content)
-VALUES(TO_DATE('22/03/2022', 'DD/MM/YYYY'), 5, 'Thanks for awesome A4 sketchbook!');
-INSERT INTO review(review_date, rating, content)
-VALUES(TO_DATE('22/03/2022', 'DD/MM/YYYY'), 2, NULL);
+INSERT INTO review(rating, content)
+VALUES(5, 'Thanks for awesome A4 sketchbook!');
+INSERT INTO review(rating, content)
+VALUES(2, NULL);
