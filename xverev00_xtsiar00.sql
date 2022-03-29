@@ -31,7 +31,8 @@ CREATE TABLE "ORDER" (
     order_id      INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     order_date    DATE DEFAULT CURRENT_DATE NOT NULL,
     status        VARCHAR(70) DEFAULT 'PROCESSING' NOT NULL,
-    invoice       VARCHAR(256) NOT NULL
+    invoice       INT NOT NULL
+        CHECK (invoice > 0)
 );
 
 --Create employee table
@@ -94,12 +95,12 @@ VALUES('Emily', 'Jones', TO_DATE('24/03/2000', 'DD/MM/YYYY'), 'iD0#Tk#0W', '12 C
 INSERT INTO customer(name, surname, birthdate, password, street, city, zip_code, payment_info, telephone_num, email)
 VALUES('James', 'Taylor', TO_DATE('01/01/1991', 'DD/MM/YYYY'), '2j2@ks2l', 'Blackhorse Grove 118','London', '21345',
        1232933677494098, 420601228345, 'taylor@gmail.com');
--- TODO invoice values?
-INSERT INTO "ORDER"(invoice) VALUES('BAD');
-INSERT INTO "ORDER"(invoice) VALUES('WORDS');
-INSERT INTO "ORDER"(status, invoice) VALUES('PROCESSED', 'ARE');
-INSERT INTO "ORDER"(status, invoice) VALUES('DELIVERING', 'NOT');
-INSERT INTO "ORDER"(status, invoice) VALUES('DELIVERED', 'SUPPORTED');
+
+INSERT INTO "ORDER"(invoice) VALUES(2491839);
+INSERT INTO "ORDER"(invoice) VALUES(202021166);
+INSERT INTO "ORDER"(status, invoice) VALUES('PROCESSED', 03000852021);
+INSERT INTO "ORDER"(status, invoice) VALUES('DELIVERING', 1900001);
+INSERT INTO "ORDER"(status, invoice) VALUES('DELIVERED', 1352);
 
 INSERT INTO employee(name, surname, password) VALUES('Jack', 'Wilson', 'DOsmi42@s');
 INSERT INTO employee(name, surname, password) VALUES('Sophie', 'Rodriguez', 'qkjw11234j');

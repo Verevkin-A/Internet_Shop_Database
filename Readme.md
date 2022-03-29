@@ -4,8 +4,6 @@
 - something wrong with auto generated primary keys? dont know yet what exactly, but will think about it
 - generalization
 - payment info can be null? if null, state it every time you buying something
-- add comments
-- add normal invoice values on insertion
 - ALEKSANDR check regex
 - make UNIQUE user email, ?user mobile number, company id, vat id
 
