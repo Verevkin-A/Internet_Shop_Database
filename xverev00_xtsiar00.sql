@@ -1,3 +1,7 @@
+-- Internet shop with pencils and sketchbooks
+-- Authors: Aleksandr Verevkin (xverev00)
+--          Ivan Tsiareshkin (xtsiar00)
+
 --Remove existing tables
 DROP TABLE customer CASCADE CONSTRAINTS PURGE;
 DROP TABLE "ORDER" CASCADE CONSTRAINTS PURGE;
@@ -35,7 +39,7 @@ CREATE TABLE cart (
     total_price   INT DEFAULT 0 NOT NULL
         CHECK(total_price >= 0),
     -- foreign keys
-    customer      INT DEFAULT NULL,
+    customer      INT NOT NULL,     --cart can't exist without customer
     CONSTRAINT cart_customer_foreign
         FOREIGN KEY (customer)
         REFERENCES customer (customer_id)
@@ -59,8 +63,8 @@ CREATE TABLE "ORDER" (
     invoice       INT UNIQUE NOT NULL
         CHECK (invoice > 0),
     --foreign keys
-    employee      INT DEFAULT NULL,
-    customer      INT DEFAULT NULL,
+    employee      INT DEFAULT NULL,     --another employee can be assigned on order
+    customer      INT NOT NULL,
     CONSTRAINT order_employee_foreign
         FOREIGN KEY (employee)
         REFERENCES employee (employee_id)
@@ -89,11 +93,11 @@ CREATE TABLE product (
     product_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     product_name  VARCHAR(70) NOT NULL,
     description   VARCHAR(256) NOT NULL,
-    price         NUMERIC(3, 0) NOT NULL
+    price         SMALLINT NOT NULL
         CHECK (price >= 0),
     --foreign keys
-    supplier      INT DEFAULT NULL,
-    employee      INT DEFAULT NULL,
+    supplier      INT NOT NULL,
+    employee      INT DEFAULT NULL,     --another employee can be assigned on product
     CONSTRAINT product_supplier_foreign
         FOREIGN KEY (supplier)
         REFERENCES supplier (supplier_id)
@@ -108,16 +112,16 @@ CREATE TABLE product (
 CREATE TABLE review (
      review_num   INT GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
      review_date  DATE DEFAULT CURRENT_DATE NOT NULL,
-     rating       INT NOT NULL
+     rating       SMALLINT NOT NULL
                     CHECK (rating >= 0 AND rating <= 5),
      content      VARCHAR(256),
     --foreign keys
-    customer      INT DEFAULT NULL,
-    product       INT DEFAULT NULL,
+    customer      INT DEFAULT NULL, --review staying if user is deleted
+    product       INT NOT NULL,
     CONSTRAINT review_customer_foreign
         FOREIGN KEY (customer)
         REFERENCES customer (customer_id)
-        ON DELETE CASCADE,
+        ON DELETE SET NULL,
     CONSTRAINT review_product_foreign
         FOREIGN KEY (product)
         REFERENCES product (product_id)
