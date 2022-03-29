@@ -1,5 +1,5 @@
 --Remove existing tables
--- DROP TABLE CUSTOMER CASCADE CONSTRAINTS PURGE;
+-- DROP TABLE customer CASCADE CONSTRAINTS PURGE;
 -- DROP TABLE "ORDER" CASCADE CONSTRAINTS PURGE;
 -- DROP TABLE employee CASCADE CONSTRAINTS PURGE;
 -- DROP TABLE cart CASCADE CONSTRAINTS PURGE;
@@ -14,7 +14,7 @@ CREATE TABLE customer (
     surname       VARCHAR(70) NOT NULL,
     birthdate     DATE NOT NULL,
     password      VARCHAR(256) NOT NULL
-        CHECK (REGEXP_LIKE (password, '^[a-z0-9.!#$@%&*+-/=?^_`{|}~]*$', 'i')), -- remove A-Z because of 'i'
+        CHECK (REGEXP_LIKE (password, '^[a-zA-Z0-9.!#$@%&*+-\\/=?^_`{|}~]{8,}$')),
     street        VARCHAR(70) NOT NULL,
     city          VARCHAR(70) NOT NULL,
     zip_code      VARCHAR(70) NOT NULL,
@@ -22,8 +22,8 @@ CREATE TABLE customer (
         CHECK (payment_info > 999999999999999),
     telephone_num NUMERIC(15, 0) NOT NULL
         CHECK (telephone_num > 99999999),
-    email         VARCHAR(256) NOT NULL
-        CHECK (REGEXP_LIKE (email, '^[a-z0-9.-]*@[a-z0-9-]+.[a-z]*$', 'i')) -- remove A-Z because of 'i'
+    email         VARCHAR(256) UNIQUE NOT NULL
+        CHECK (REGEXP_LIKE (email, '^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-]+$'))
 );
 
 --Create order table
@@ -31,7 +31,7 @@ CREATE TABLE "ORDER" (
     order_id      INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     order_date    DATE DEFAULT CURRENT_DATE NOT NULL,
     status        VARCHAR(70) DEFAULT 'PROCESSING' NOT NULL,
-    invoice       INT NOT NULL
+    invoice       INT UNIQUE NOT NULL
         CHECK (invoice > 0)
 );
 
@@ -41,7 +41,7 @@ CREATE TABLE employee (
     name          VARCHAR(70) NOT NULL,
     surname       VARCHAR(70) NOT NULL,
     password      VARCHAR(256) NOT NULL
-        CHECK (REGEXP_LIKE (password, '^[a-z0-9.!#$@%&*+-/=?^_`{|}~]*$', 'i'))  -- remove A-Z because of 'i'
+        CHECK (REGEXP_LIKE (password, '^[a-zA-Z0-9.!#$@%&*+-\\/=?^_`{|}~]{8,}$'))
 );
 
 --Create cart table
@@ -68,8 +68,8 @@ CREATE TABLE supplier (
     street        VARCHAR(70) NOT NULL,
     city          VARCHAR(70) NOT NULL,
     zip_code      VARCHAR(70) NOT NULL,
-    company_ID    VARCHAR(70) NOT NULL,
-    VAT_ID        VARCHAR(70) NOT NULL
+    company_ID    VARCHAR(70) UNIQUE NOT NULL,
+    VAT_ID        VARCHAR(70) UNIQUE NOT NULL
         CHECK (REGEXP_LIKE (VAT_ID, '^[CZ]{2}[0-9]{9,10}$', 'i'))
 );
 
