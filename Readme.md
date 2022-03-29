@@ -3,7 +3,7 @@
 # TODO's:
 - something wrong with auto generated primary keys? dont know yet what exactly, but will think about it
 - generalization
-- add foreign keys
+- IVAN check foreign keys
 
 # For removing sequences folder:
 - drop table with PURGE option (DROP TABLE table_name PURGE)
