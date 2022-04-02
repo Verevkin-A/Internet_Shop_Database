@@ -15,31 +15,31 @@ DROP TABLE order_product CASCADE CONSTRAINTS PURGE;
 
 --Create customer table
 CREATE TABLE customer (
-    customer_id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name          VARCHAR(70) NOT NULL,
-    surname       VARCHAR(70) NOT NULL,
-    birthdate     DATE NOT NULL,
-    password      VARCHAR(256) NOT NULL
-        CHECK (REGEXP_LIKE (password, '^[a-zA-Z0-9.!#$@%&*+-\\/=?^_`{|}~]{8,}$')),
-    street        VARCHAR(70) NOT NULL,
-    city          VARCHAR(70) NOT NULL,
-    zip_code      VARCHAR(70) NOT NULL,
-    payment_info  NUMBER(16, 0) NOT NULL
-        CHECK (payment_info > 999999999999999),
-    telephone_num NUMERIC(15, 0) NOT NULL
-        CHECK (telephone_num > 99999999),
-    email         VARCHAR(256) UNIQUE NOT NULL
-        CHECK (REGEXP_LIKE (email, '^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-]+$'))
+	customer_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	name           VARCHAR(70) NOT NULL,
+	surname        VARCHAR(70) NOT NULL,
+	birthdate      DATE NOT NULL,
+	password       VARCHAR(256) NOT NULL
+		CHECK (REGEXP_LIKE (password, '^[a-zA-Z0-9.!#$@%&*+-\\/=?^_`{|}~]{8,}$')),
+	street         VARCHAR(70) NOT NULL,
+	city 		   VARCHAR(70) NOT NULL,
+	zip_code       VARCHAR(70) NOT NULL,
+	payment_info   NUMBER(16, 0) NOT NULL
+		CHECK (payment_info > 999999999999999),
+	telephone_num NUMERIC(15, 0) NOT NULL
+		CHECK (telephone_num > 99999999),
+	email          VARCHAR(256) UNIQUE NOT NULL
+		CHECK (REGEXP_LIKE (email, '^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-]+$'))
 );
 
 --Create cart table
 CREATE TABLE cart (
-    cart_id       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    products      VARCHAR(256) DEFAULT NULL,    --TODO remove?
-    total_price   INT DEFAULT 0 NOT NULL
-        CHECK(total_price >= 0),
+	cart_id        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	products       VARCHAR(256) DEFAULT NULL,    --TODO remove?
+	total_price    INT DEFAULT 0 NOT NULL
+		CHECK(total_price >= 0),
     -- foreign keys
-    customer      INT NOT NULL,     --cart can't exist without customer
+    customer       INT NOT NULL,     --cart can't exist without customer
     CONSTRAINT cart_customer_foreign
         FOREIGN KEY (customer)
         REFERENCES customer (customer_id)
@@ -48,24 +48,24 @@ CREATE TABLE cart (
 
 --Create employee table
 CREATE TABLE employee (
-    employee_id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name          VARCHAR(70) NOT NULL,
-    surname       VARCHAR(70) NOT NULL,
-    password      VARCHAR(256) NOT NULL
-        CHECK (REGEXP_LIKE (password, '^[a-zA-Z0-9.!#$@%&*+-\\/=?^_`{|}~]{8,}$'))
+    employee_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name           VARCHAR(70) NOT NULL,
+    surname        VARCHAR(70) NOT NULL,
+    password       VARCHAR(256) NOT NULL
+		CHECK (REGEXP_LIKE (password, '^[a-zA-Z0-9.!#$@%&*+-\\/=?^_`{|}~]{8,}$'))
 );
 
 --Create order table
 CREATE TABLE "ORDER" (
-    order_id      INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    order_date    DATE DEFAULT CURRENT_DATE NOT NULL,
-    status        VARCHAR(70) DEFAULT 'PROCESSING' NOT NULL,
-    invoice       INT UNIQUE NOT NULL
-        CHECK (invoice > 0),
-    --foreign keys
-    employee      INT DEFAULT NULL,     --another employee can be assigned on order
-    customer      INT NOT NULL,
-    CONSTRAINT order_employee_foreign
+	order_id       INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	order_date     DATE DEFAULT CURRENT_DATE NOT NULL,
+	status         VARCHAR(70) DEFAULT 'PROCESSING' NOT NULL,
+	invoice        INT UNIQUE NOT NULL
+		CHECK (invoice > 0),
+	--foreign keys
+	employee       INT DEFAULT NULL,     --another employee can be assigned on order
+	customer       INT NOT NULL,
+	CONSTRAINT order_employee_foreign
         FOREIGN KEY (employee)
         REFERENCES employee (employee_id)
         ON DELETE SET NULL,
@@ -77,27 +77,27 @@ CREATE TABLE "ORDER" (
 
 --Create supplier table
 CREATE TABLE supplier (
-    supplier_id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    supplier_name VARCHAR(70) NOT NULL,
-    street        VARCHAR(70) NOT NULL,
-    city          VARCHAR(70) NOT NULL,
-    zip_code      VARCHAR(70) NOT NULL,
-    company_ID    VARCHAR(70) UNIQUE NOT NULL,
-    VAT_ID        VARCHAR(70) UNIQUE NOT NULL
+    supplier_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    supplier_name  VARCHAR(70) NOT NULL,
+    street         VARCHAR(70) NOT NULL,
+    city           VARCHAR(70) NOT NULL,
+    zip_code       VARCHAR(70) NOT NULL,
+    company_ID     VARCHAR(70) UNIQUE NOT NULL,
+    VAT_ID         VARCHAR(70) UNIQUE NOT NULL
         CHECK (REGEXP_LIKE (VAT_ID, '^[CZ]{2}[0-9]{9,10}$', 'i'))
 );
 
 
 --Create product table
 CREATE TABLE product (
-    product_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    product_name  VARCHAR(70) NOT NULL,
-    description   VARCHAR(256) NOT NULL,
-    price         SMALLINT NOT NULL
-        CHECK (price >= 0),
-    --foreign keys
-    supplier      INT NOT NULL,
-    employee      INT DEFAULT NULL,     --another employee can be assigned on product
+	product_id     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	product_name   VARCHAR(70) NOT NULL,
+	description    VARCHAR(256) NOT NULL,
+	price          SMALLINT NOT NULL
+		CHECK (price >= 0),
+	--foreign keys
+	supplier       INT NOT NULL,
+	employee       INT DEFAULT NULL,     --another employee can be assigned on product
     CONSTRAINT product_supplier_foreign
         FOREIGN KEY (supplier)
         REFERENCES supplier (supplier_id)
@@ -108,30 +108,50 @@ CREATE TABLE product (
         ON DELETE SET NULL
 );
 
+CREATE TABLE crayon (
+	product_id     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	type           VARCHAR(70) NOT NULL,
+	length         INT NOT NULL,
+	amount         INT NOT NULL
+		CHECK (amount > 0),
+	color          VARCHAR(70) NOT NULL	
+);
+
+CREATE TABLE sketchbook (
+	product_id     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	grammage       INT NOT NULL,
+	size           VARCHAR(70),
+	num_of_pages   INT NOT NULL
+		CHECK (num_of_pages > 0),
+	paper_strength INT NOT NULL
+);
+
+
+
 --Create review table
 CREATE TABLE review (
-     review_num   INT GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
-     review_date  DATE DEFAULT CURRENT_DATE NOT NULL,
-     rating       SMALLINT NOT NULL
-                    CHECK (rating >= 0 AND rating <= 5),
-     content      VARCHAR(256),
-    --foreign keys
-    customer      INT DEFAULT NULL, --review staying if user is deleted
-    product       INT NOT NULL,
-    CONSTRAINT review_customer_foreign
-        FOREIGN KEY (customer)
-        REFERENCES customer (customer_id)
-        ON DELETE SET NULL,
-    CONSTRAINT review_product_foreign
-        FOREIGN KEY (product)
-        REFERENCES product (product_id)
-        ON DELETE CASCADE
+	review_num     INT GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) PRIMARY KEY,
+	review_date    DATE DEFAULT CURRENT_DATE NOT NULL,
+	rating         SMALLINT NOT NULL
+		CHECK (rating >= 0 AND rating <= 5),
+	content        VARCHAR(256),
+	--foreign keys
+	customer       INT DEFAULT NULL, --review staying if user is deleted
+	product        INT NOT NULL,
+	CONSTRAINT review_customer_foreign
+		FOREIGN KEY (customer)
+		REFERENCES customer (customer_id)
+		ON DELETE SET NULL,
+	CONSTRAINT review_product_foreign
+		FOREIGN KEY (product)
+		REFERENCES product (product_id)
+		ON DELETE CASCADE
 );
 
 --Cart-Product relation table
 CREATE TABLE cart_product (
-	cart          INT NOT NULL,
-	product       INT NOT NULL,
+	cart           INT NOT NULL,
+	product        INT NOT NULL,
 	CONSTRAINT cart_product_primary
 		PRIMARY KEY (cart, product),
 	CONSTRAINT cart_product_cart_foreign
@@ -146,8 +166,8 @@ CREATE TABLE cart_product (
 
 --Order-Product relation table
 CREATE TABLE order_product (
-	"order"       INT NOT NULL,
-	product       INT NOT NULL,
+	"order"        INT NOT NULL,
+	product        INT NOT NULL,
 	CONSTRAINT order_product_primary
 		PRIMARY KEY ("order", product),
 	CONSTRAINT order_product_order_foreign
