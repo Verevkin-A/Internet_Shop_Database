@@ -8,8 +8,6 @@ DROP TABLE "ORDER" CASCADE CONSTRAINTS PURGE;
 DROP TABLE employee CASCADE CONSTRAINTS PURGE;
 DROP TABLE cart CASCADE CONSTRAINTS PURGE;
 DROP TABLE product CASCADE CONSTRAINTS PURGE;
-DROP TABLE crayon CASCADE CONSTRAINTS PURGE;
-DROP TABLE sketchbook CASCADE CONSTRAINTS PURGE;
 DROP TABLE supplier CASCADE CONSTRAINTS PURGE;
 DROP TABLE review CASCADE CONSTRAINTS PURGE;
 DROP TABLE cart_product CASCADE CONSTRAINTS PURGE;
@@ -37,7 +35,6 @@ CREATE TABLE customer (
 --Create cart table
 CREATE TABLE cart (
 	cart_id        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	products       VARCHAR(256) DEFAULT NULL,    --TODO remove?
 	total_price    INT DEFAULT 0 NOT NULL
 		CHECK(total_price >= 0),
     -- foreign keys
@@ -97,6 +94,24 @@ CREATE TABLE product (
 	description    VARCHAR(256) NOT NULL,
 	price          SMALLINT NOT NULL
 		CHECK (price >= 0),
+	type           VARCHAR(10) NOT NULL
+	    CHECK (type = 'crayon' or type = 'sketchbook'),
+	-- crayon attributes
+	crayon_type    VARCHAR(70) DEFAULT NULL,
+	length         INT DEFAULT NULL
+	    CHECK (length > 0),
+	amount         INT DEFAULT NULL
+		CHECK (amount > 0),
+	color          VARCHAR(70) DEFAULT NULL,
+	-- sketchbook attributes
+	grammage       INT DEFAULT NULL
+	    CHECK (grammage > 0),
+	"size"         VARCHAR(70) DEFAULT NULL,
+	num_of_pages   INT DEFAULT NULL
+		CHECK (num_of_pages > 0),
+	density INT DEFAULT NULL
+	    CHECK (density > 0),
+
 	--foreign keys
 	supplier       INT NOT NULL,
 	employee       INT DEFAULT NULL,     --another employee can be assigned on product
@@ -109,26 +124,6 @@ CREATE TABLE product (
         REFERENCES employee (employee_id)
         ON DELETE SET NULL
 );
-
-CREATE TABLE crayon (
-	product_id     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	type           VARCHAR(70) NOT NULL,
-	length         INT NOT NULL,
-	amount         INT NOT NULL
-		CHECK (amount > 0),
-	color          VARCHAR(70) NOT NULL	
-);
-
-CREATE TABLE sketchbook (
-	product_id     INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	grammage       INT NOT NULL,
-	size           VARCHAR(70),
-	num_of_pages   INT NOT NULL
-		CHECK (num_of_pages > 0),
-	paper_strength INT NOT NULL
-);
-
-
 
 --Create review table
 CREATE TABLE review (
@@ -197,10 +192,10 @@ INSERT INTO customer(name, surname, birthdate, password, street, city, zip_code,
 VALUES('James', 'Taylor', TO_DATE('01/01/1991', 'DD/MM/YYYY'), '2j2@ks2l', 'Blackhorse Grove 118','London', '21345',
        1232933677494098, 420601228345, 'taylor@gmail.com');
 
-INSERT INTO cart(products, total_price, customer) VALUES(DEFAULT, DEFAULT, 1);
-INSERT INTO cart(products, total_price, customer) VALUES('1 Black crayon Bulk, 2x A4 sketchbook Conda', 31, 2);
-INSERT INTO cart(products, total_price, customer) VALUES('1 White crayon Bulk', 7, 3);
-INSERT INTO cart(products, total_price, customer) VALUES('1x A4 sketchbook Conda', 12, 4);
+INSERT INTO cart(total_price, customer) VALUES(DEFAULT, 1);
+INSERT INTO cart(total_price, customer) VALUES(31, 2);
+INSERT INTO cart(total_price, customer) VALUES(7, 3);
+INSERT INTO cart(total_price, customer) VALUES(12, 4);
 
 INSERT INTO employee(name, surname, password) VALUES('Jack', 'Wilson', 'DOsmi42@s');
 INSERT INTO employee(name, surname, password) VALUES('Sophie', 'Rodriguez', 'qkjw11234j');
@@ -216,16 +211,16 @@ VALUES('Office SUP s.r.o', '59a Commercial St', 'Rothwell', '83294', '09354970',
 INSERT INTO supplier(supplier_name, street, city, zip_code, company_ID, VAT_ID)
 VALUES('BestSupplies s.r.o', '23b Supplies St', 'Bestcity', '42000', '83720420', 'CZ847205730');
 
-INSERT INTO product(product_name, description, price, supplier, employee)
-VALUES('Black crayon Bulk', 'Black Long-Lasting Marking Crayon', 7, 2, 1);
-INSERT INTO product(product_name, description, price, supplier, employee)
-VALUES('White crayon Bulk', 'White Long-Lasting Marking Crayon', 7, 2, 2);
-INSERT INTO product(product_name, description, price, supplier, employee)
-VALUES('Red crayon Bulk', 'Red Long-Lasting Marking Crayon', 7, 1, 1);
-INSERT INTO product(product_name, description, price, supplier, employee)
-VALUES('A4 sketchbook Conda', 'A4 Heavyweight Hardcover Sketchbook, Ideal for Kids & Adults', 12, 1, 2);
-INSERT INTO product (product_name, description, price, supplier, employee)
-VALUES('A6 sketchbook Conda', 'A3 Heavyweight Hardcover Sketchbook, Ideal for Kids & Adults', 9, 2, 1);
+INSERT INTO product(product_name, description, price, type, crayon_type, length, amount, color, supplier, employee)
+VALUES('Black crayon Bulk', 'Black Long-Lasting Marking Crayon', 7, 'crayon', 'Long-Lasting', 10, 5, 'black', 2, 1);
+INSERT INTO product(product_name, description, price, type, crayon_type, length, amount, color, supplier, employee)
+VALUES('White crayon Bulk', 'White Long-Lasting Marking Crayon', 7, 'crayon', 'Long-Lasting', 10, 5, 'white', 2, 2);
+INSERT INTO product(product_name, description, price, type, crayon_type, length, amount, color, supplier, employee)
+VALUES('Red crayon Bulk', 'Red Long-Lasting Marking Crayon', 7, 'crayon', 'Long-Lasting', 10, 5, 'red', 1, 1);
+INSERT INTO product(product_name, description, price, type, grammage, "size", num_of_pages, density, supplier, employee)
+VALUES('A4 sketchbook Conda', 'A4 Heavyweight Hardcover Sketchbook, Ideal for Kids & Adults', 12, 'sketchbook', 60, 'Big', 32, 1200, 1, 2);
+INSERT INTO product(product_name, description, price, type, grammage, "size", num_of_pages, density, supplier, employee)
+VALUES('A6 sketchbook Conda', 'A3 Heavyweight Hardcover Sketchbook, Ideal for Kids & Adults', 9, 'sketchbook', 30, 'Medium', 32, 1000, 2, 1);
 
 INSERT INTO review(rating, content, customer, product)
 VALUES(5, 'Thanks for awesome A4 sketchbook!', 2, 3);
