@@ -26,7 +26,7 @@ CREATE TABLE customer (
 	zip_code       VARCHAR(70) NOT NULL,
 	payment_info   NUMBER(16, 0) NOT NULL
 		CHECK (payment_info > 999999999999999),
-	telephone_num NUMERIC(15, 0) NOT NULL
+	telephone_num  NUMERIC(15, 0) NOT NULL
 		CHECK (telephone_num > 99999999),
 	email          VARCHAR(256) UNIQUE NOT NULL
 		CHECK (REGEXP_LIKE (email, '^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-]+$'))
