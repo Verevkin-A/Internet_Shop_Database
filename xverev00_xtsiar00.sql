@@ -62,7 +62,7 @@ CREATE TABLE "ORDER" (
 	invoice        INT UNIQUE NOT NULL
 		CHECK (invoice > 0),
 	--foreign keys
-	employee       INT DEFAULT NULL,     --another employee can be assigned on order
+	employee       INT DEFAULT NULL,     --another employee can be assigned on the order
 	customer       INT NOT NULL,
 	CONSTRAINT order_employee_foreign
         FOREIGN KEY (employee)
@@ -114,7 +114,7 @@ CREATE TABLE product (
 
 	--foreign keys
 	supplier       INT NOT NULL,
-	employee       INT DEFAULT NULL,     --another employee can be assigned on product
+	employee       INT DEFAULT NULL,     --another employee can be assigned on the product
     CONSTRAINT product_supplier_foreign
         FOREIGN KEY (supplier)
         REFERENCES supplier (supplier_id)
@@ -133,7 +133,7 @@ CREATE TABLE review (
 		CHECK (rating >= 0 AND rating <= 5),
 	content        VARCHAR(256),
 	--foreign keys
-	customer       INT DEFAULT NULL, --review staying if user is deleted
+	customer       INT DEFAULT NULL, --review staying if the user was deleted
 	product        INT NOT NULL,
 	CONSTRAINT review_customer_foreign
 		FOREIGN KEY (customer)
