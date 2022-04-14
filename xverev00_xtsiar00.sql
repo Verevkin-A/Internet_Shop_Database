@@ -223,9 +223,11 @@ INSERT INTO product(product_name, description, price, type, grammage, "size", nu
 VALUES('A6 sketchbook Conda', 'A3 Heavyweight Hardcover Sketchbook, Ideal for Kids & Adults', 9, 'sketchbook', 30, 'Medium', 32, 1000, 2, 1);
 
 INSERT INTO review(rating, content, customer, product)
-VALUES(5, 'Thanks for awesome A4 sketchbook!', 2, 3);
+VALUES(5, 'Thanks for awesome A4 sketchbook!', 2, 4);
 INSERT INTO review(rating, content, customer, product)
 VALUES(2, NULL, 4, 1);
+INSERT INTO review(rating, content, customer, product)
+VALUES(5, 'paper is so soft. love it.', 4, 4);
 
 INSERT INTO cart_product(cart, product) VALUES (1, 1);
 INSERT INTO cart_product(cart, product) VALUES (1, 3);
@@ -236,3 +238,41 @@ INSERT INTO order_product("order", product) VALUES (3, 1);
 INSERT INTO order_product("order", product) VALUES (3, 3);
 INSERT INTO order_product("order", product) VALUES (2, 3);
 INSERT INTO order_product("order", product) VALUES (2, 4);
+
+-- TASK #3 -- SELECTS --
+
+-- JOIN 2 tables
+-- Total price of the cart and email of customers who left something in their carts
+SELECT customer_id, email, total_price FROM customer
+    JOIN cart ON customer.customer_id = cart.customer
+    WHERE total_price <> 0
+    ORDER BY total_price DESC;
+
+
+-- JOIN 2 tables
+
+
+-- JOIN 3 tables
+-- Product name, rating, id and email of customers who rated any sketchbook
+SELECT DISTINCT C.customer_id, C.email, P.product_name, R.rating FROM customer C
+    INNER JOIN review R ON C.customer_id = R.customer
+    INNER JOIN product P on R.product = P.product_id
+    WHERE P.type = 'sketchbook';
+
+-- GROUP BY with aggregation function
+
+
+
+-- GROUP BY with aggregation function
+
+
+-- EXIST predicate
+
+
+-- IN with nested select
+-- Telephone number and birthday date of customers who left only 4 and 5 stars reviews
+SELECT DISTINCT C.customer_id, C.telephone_num, C.birthdate FROM customer C
+    INNER JOIN review R ON C.customer_id = R.customer
+    WHERE C.customer_id NOT IN
+        (SELECT C.customer_id FROM CUSTOMER C
+            INNER JOIN REVIEW R ON C.customer_id = R.customer WHERE R.rating <= 3);
