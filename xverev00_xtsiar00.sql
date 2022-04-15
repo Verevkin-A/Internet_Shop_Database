@@ -199,6 +199,7 @@ INSERT INTO cart(total_price, customer) VALUES(12, 4);
 
 INSERT INTO employee(name, surname, password) VALUES('Jack', 'Wilson', 'DOsmi42@s');
 INSERT INTO employee(name, surname, password) VALUES('Sophie', 'Rodriguez', 'qkjw11234j');
+INSERT INTO employee(name, surname, password) VALUES('Aleksandr', 'Verevkin', 'password123');
 
 INSERT INTO "ORDER"(invoice, employee, customer) VALUES(2491839, 2, 1);
 INSERT INTO "ORDER"(invoice, employee, customer) VALUES(202021166, 1, 1);
@@ -210,6 +211,8 @@ INSERT INTO supplier(supplier_name, street, city, zip_code, company_ID, VAT_ID)
 VALUES('Office SUP s.r.o', '59a Commercial St', 'Rothwell', '83294', '09354970', 'CZ123456789');
 INSERT INTO supplier(supplier_name, street, city, zip_code, company_ID, VAT_ID)
 VALUES('BestSupplies s.r.o', '23b Supplies St', 'Bestcity', '42000', '83720420', 'CZ847205730');
+INSERT INTO supplier(supplier_name, street, city, zip_code, company_ID, VAT_ID)
+VALUES('PencilDoctor s.r.o', '9b Main St', 'Bestcity', '42012', '45129362', 'CZ843041962');
 
 INSERT INTO product(product_name, description, price, type, crayon_type, length, amount, color, supplier, employee)
 VALUES('Black crayon Bulk', 'Black Long-Lasting Marking Crayon', 7, 'crayon', 'Long-Lasting', 10, 5, 'black', 2, 1);
@@ -243,7 +246,7 @@ INSERT INTO order_product("order", product) VALUES (2, 4);
 
 -- JOIN 2 tables
 -- Total price of the cart and email of customers who left something in their carts
-SELECT customer_id, email, total_price FROM customer
+SELECT customer_id, name, surname, email, total_price FROM customer
     JOIN cart ON customer.customer_id = cart.customer
     WHERE total_price <> 0
     ORDER BY total_price DESC;
@@ -260,18 +263,41 @@ SELECT DISTINCT C.customer_id, C.email, P.product_name, R.rating FROM customer C
     WHERE P.type = 'sketchbook';
 
 -- GROUP BY with aggregation function
+-- How many products supply each supplier
+SELECT S.supplier_id, S.supplier_name, COUNT(P.product_id) supplied_products FROM supplier S
+    LEFT JOIN product P on S.supplier_id = P.supplier
+    GROUP BY S.supplier_id, S.supplier_name;
 
+-- How many crayons supply each supplier
+SELECT S.supplier_id, S.supplier_name, COUNT(DECODE(P.type, 'crayon', 1)) supplied_products FROM supplier S
+    LEFT JOIN product P on S.supplier_id = P.supplier
+GROUP BY S.supplier_id, S.supplier_name;
 
+-- Top 3 products with most reviews
+SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM product P
+    LEFT JOIN review R on P.product_id = R.product
+    GROUP BY P.product_id, P.product_name
+    ORDER BY number_of_reviews DESC
+    FETCH FIRST 3 ROW ONLY;
 
 -- GROUP BY with aggregation function
 
 
--- EXIST predicate
+-- EXISTS predicate
+-- Employees who doesn't have any assigned products
+SELECT E.employee_id, E.name, E.surname FROM employee E
+    WHERE NOT EXISTS
+        (SELECT * FROM product P
+        WHERE P.employee = E.employee_id);
 
 
 -- IN with nested select
--- Telephone number and birthday date of customers who left only 4 and 5 stars reviews
-SELECT DISTINCT C.customer_id, C.telephone_num, C.birthdate FROM customer C
+-- Customers who left only 4 and 5 stars reviews
+SELECT DISTINCT C.customer_id,
+                C.name,
+                C.surname,
+                C.telephone_num,
+                C.birthdate FROM customer C
     INNER JOIN review R ON C.customer_id = R.customer
     WHERE C.customer_id NOT IN
         (SELECT C.customer_id FROM CUSTOMER C
