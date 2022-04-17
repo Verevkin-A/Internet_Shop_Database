@@ -251,9 +251,11 @@ SELECT customer_id, name, surname, email, total_price FROM customer
     WHERE total_price <> 0
     ORDER BY total_price DESC;
 
-
 -- JOIN 2 tables
-
+-- Order id and order status of customers whose id is greater than 2
+SELECT order_id, status FROM "ORDER" O	
+	JOIN customers C ON C.customer_id = O.customer 
+	WHERE customer.customer_id > 2;
 
 -- JOIN 3 tables
 -- Product name, rating, id and email of customers who rated any sketchbook
@@ -267,12 +269,14 @@ SELECT DISTINCT C.customer_id, C.email, P.product_name, R.rating FROM customer C
 SELECT S.supplier_id, S.supplier_name, COUNT(P.product_id) supplied_products FROM supplier S
     LEFT JOIN product P on S.supplier_id = P.supplier
     GROUP BY S.supplier_id, S.supplier_name;
-
+	
+-- GROUP BY with aggregation function
 -- How many crayons supply each supplier
 SELECT S.supplier_id, S.supplier_name, COUNT(DECODE(P.type, 'crayon', 1)) supplied_products FROM supplier S
     LEFT JOIN product P on S.supplier_id = P.supplier
 GROUP BY S.supplier_id, S.supplier_name;
 
+-- GROUP BY with aggregation function
 -- Top 3 products with most reviews
 SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM product P
     LEFT JOIN review R on P.product_id = R.product
@@ -280,16 +284,12 @@ SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM 
     ORDER BY number_of_reviews DESC
     FETCH FIRST 3 ROW ONLY;
 
--- GROUP BY with aggregation function
-
-
 -- EXISTS predicate
 -- Employees who doesn't have any assigned products
 SELECT E.employee_id, E.name, E.surname FROM employee E
     WHERE NOT EXISTS
         (SELECT * FROM product P
         WHERE P.employee = E.employee_id);
-
 
 -- IN with nested select
 -- Customers who left only 4 and 5 stars reviews
