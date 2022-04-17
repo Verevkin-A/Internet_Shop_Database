@@ -253,9 +253,9 @@ SELECT customer_id, name, surname, email, total_price FROM customer
 
 -- JOIN 2 tables
 -- Order id and order status of customers whose id is greater than 2
-SELECT order_id, status FROM "ORDER" O	
+SELECT O.order_id, O.status FROM "ORDER" O	
 	JOIN customers C ON C.customer_id = O.customer 
-	WHERE customer.customer_id > 2;
+	WHERE C.customer_id > 2;
 
 -- JOIN 3 tables
 -- Product name, rating, id and email of customers who rated any sketchbook
