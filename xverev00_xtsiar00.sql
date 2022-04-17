@@ -252,9 +252,18 @@ SELECT customer_id, name, surname, email, total_price FROM customer
     ORDER BY total_price DESC;
 
 -- JOIN 2 tables
+-- Supplier of each product
+SELECT P.product_id,
+       P.product_name,
+       S.supplier_id,
+       S.supplier_name FROM supplier S
+    RIGHT JOIN product P on S.supplier_id = P.supplier
+    ORDER BY P.product_id;
+
+-- JOIN 2 tables
 -- Order id and order status of customers whose id is greater than 2
-SELECT O.order_id, O.status FROM "ORDER" O	
-	JOIN customers C ON C.customer_id = O.customer 
+SELECT O.order_id, O.status FROM "ORDER" O
+	JOIN customer C ON C.customer_id = O.customer
 	WHERE C.customer_id > 2;
 
 -- JOIN 3 tables
