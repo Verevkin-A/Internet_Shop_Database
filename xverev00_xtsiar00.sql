@@ -311,3 +311,32 @@ SELECT DISTINCT C.customer_id,
     WHERE C.customer_id NOT IN
         (SELECT C.customer_id FROM CUSTOMER C
             INNER JOIN REVIEW R ON C.customer_id = R.customer WHERE R.rating <= 3);
+
+-- TASK #4 --
+
+-- TRIGGERS --
+
+
+-- PROCEDURES --
+
+
+-- EXPLAIN PLAN --
+
+
+-- PERMISSIONS --
+GRANT ALL PRIVILEGES ON customer TO XTSIAR00;
+GRANT ALL ON "ORDER" TO XTSIAR00;
+GRANT ALL ON employee TO XTSIAR00;
+GRANT ALL ON cart TO XTSIAR00;
+GRANT ALL ON product TO XTSIAR00;
+GRANT ALL ON supplier TO XTSIAR00;
+GRANT ALL ON review TO XTSIAR00;
+GRANT ALL ON cart_product TO XTSIAR00;
+GRANT ALL ON order_product TO XTSIAR00;
+
+-- GRANt EXECUTE ON $procedure TO XTSIAR00;
+
+-- MATERIALIZED VIEW --
+
+
+
