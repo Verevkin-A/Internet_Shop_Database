@@ -334,9 +334,26 @@ GRANT ALL ON review TO XTSIAR00;
 GRANT ALL ON cart_product TO XTSIAR00;
 GRANT ALL ON order_product TO XTSIAR00;
 
--- GRANt EXECUTE ON $procedure TO XTSIAR00;
+-- TODO GRANT EXECUTE ON $procedure TO XTSIAR00;
 
 -- MATERIALIZED VIEW --
 
+DROP MATERIALIZED VIEW products_suppliers;
 
+-- Products and their suppliers
+CREATE MATERIALIZED VIEW products_suppliers
+    BUILD IMMEDIATE AS
+        SELECT product_id,
+           product_name,
+           supplier_id,
+           supplier_name FROM supplier
+        JOIN product on supplier_id = supplier
+        ORDER BY product_id;
 
+SELECT * FROM products_suppliers;
+-- add new product
+INSERT INTO product(product_name, description, price, type, crayon_type, length, amount, color, supplier, employee)
+VALUES('Red long crayon', 'Red Marking Crayon', 5, 'crayon', 'Marking', 9, 5, 'red', 3, 2);
+COMMIT;
+-- data doesn't change
+SELECT * FROM products_suppliers;
