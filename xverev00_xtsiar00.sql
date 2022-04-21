@@ -12,6 +12,7 @@ DROP TABLE supplier CASCADE CONSTRAINTS PURGE;
 DROP TABLE review CASCADE CONSTRAINTS PURGE;
 DROP TABLE cart_product CASCADE CONSTRAINTS PURGE;
 DROP TABLE order_product CASCADE CONSTRAINTS PURGE;
+DROP MATERIALIZED VIEW products_suppliers;
 
 --Create customer table
 CREATE TABLE customer (
@@ -316,6 +317,47 @@ SELECT DISTINCT C.customer_id,
 
 -- TRIGGERS --
 
+-- Recount total cart price
+CREATE OR REPLACE TRIGGER update_cart_price
+    BEFORE INSERT ON cart_product       -- TODO on delete?
+    FOR EACH ROW
+DECLARE
+    cart_total INT;
+BEGIN
+    SELECT SUM(price) INTO cart_total FROM CART_PRODUCT C1 JOIN
+        CART C2 on C1.CART = C2.CART_ID JOIN
+        PRODUCT P on C1.PRODUCT = P.PRODUCT_ID
+        WHERE CART_ID = :NEW.cart
+        GROUP BY CART_ID;
+    UPDATE cart
+        SET total_price = cart_total + (SELECT price FROM product WHERE product_id = :NEW.product)
+    WHERE cart_id = :NEW.cart;
+END;
+-- total price of cart is updating after inserting new products
+INSERT INTO cart_product(cart, product) VALUES (1, 5);
+SELECT total_price FROM cart WHERE customer = 1;
+INSERT INTO cart_product(cart, product) VALUES (1, 2);
+SELECT total_price FROM cart WHERE customer = 1;
+
+-- Check if user already have review on reviewed product
+CREATE OR REPLACE TRIGGER check_duplicate_review
+    BEFORE INSERT ON review
+    FOR EACH ROW
+DECLARE
+    review_cnt INT;
+BEGIN
+    SELECT COUNT(*) INTO review_cnt FROM review WHERE customer = :NEW.customer AND product = :NEW.product;
+    IF review_cnt <> 0 THEN
+        RAISE_APPLICATION_ERROR(-20069, 'Review from this user already exists');
+    END IF;
+END;
+
+-- creating review on product
+INSERT INTO review(rating, content, customer, product)
+VALUES(4, 'nice crayon', 4, 3);
+-- error on attempt of creating new review on the same product
+INSERT INTO review(rating, content, customer, product)
+VALUES(5, 'good crayon', 4, 3);
 
 -- PROCEDURES --
 
