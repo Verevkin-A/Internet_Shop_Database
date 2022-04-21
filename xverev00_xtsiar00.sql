@@ -364,8 +364,34 @@ VALUES(5, 'good crayon', 4, 3);
 
 -- EXPLAIN PLAN --
 
+DROP INDEX product_indentif;
+
+-- amount of reviews on each product
+EXPLAIN PLAN FOR
+    SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM product P
+    LEFT JOIN review R on P.product_id = R.product
+    GROUP BY P.product_id,
+             P.product_name
+    ORDER BY number_of_reviews DESC,
+             P.product_id;
+-- show executed operations WITHOUT index
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+
+-- create index for product identification columns, for faster searching
+CREATE INDEX product_indentif ON product(product_id, product_name);
+-- evaluation of the same select, now with index
+EXPLAIN PLAN SET STATEMENT_ID = 'performanceAnalysisAfter' FOR
+    SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM product P
+    LEFT JOIN review R on P.product_id = R.product
+    GROUP BY P.product_id,
+             P.product_name
+    ORDER BY number_of_reviews DESC,
+             P.product_id;
+-- show executed operations WITH index
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
 
 -- PERMISSIONS --
+
 GRANT ALL PRIVILEGES ON customer TO XTSIAR00;
 GRANT ALL ON "ORDER" TO XTSIAR00;
 GRANT ALL ON employee TO XTSIAR00;
