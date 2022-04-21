@@ -324,11 +324,11 @@ CREATE OR REPLACE TRIGGER update_cart_price
 DECLARE
     cart_total INT;
 BEGIN
-    SELECT SUM(price) INTO cart_total FROM CART_PRODUCT C1 JOIN
-        CART C2 on C1.CART = C2.CART_ID JOIN
-        PRODUCT P on C1.PRODUCT = P.PRODUCT_ID
-        WHERE CART_ID = :NEW.cart
-        GROUP BY CART_ID;
+    SELECT SUM(price) INTO cart_total FROM cart_product CP JOIN
+        cart C on CP.cart = C.cart_id JOIN
+        product P on CP.product = P.product_id
+        WHERE C.cart_id = :NEW.cart
+        GROUP BY C.cart_id;
     UPDATE cart
         SET total_price = cart_total + (SELECT price FROM product WHERE product_id = :NEW.product)
     WHERE cart_id = :NEW.cart;
@@ -346,7 +346,8 @@ CREATE OR REPLACE TRIGGER check_duplicate_review
 DECLARE
     review_cnt INT;
 BEGIN
-    SELECT COUNT(*) INTO review_cnt FROM review WHERE customer = :NEW.customer AND product = :NEW.product;
+    SELECT COUNT(*) INTO review_cnt FROM review
+        WHERE customer = :NEW.customer AND product = :NEW.product;
     IF review_cnt <> 0 THEN
         RAISE_APPLICATION_ERROR(-20069, 'Review from this user already exists');
     END IF;
@@ -411,12 +412,12 @@ DROP MATERIALIZED VIEW products_suppliers;
 -- Products and their suppliers
 CREATE MATERIALIZED VIEW products_suppliers
     BUILD IMMEDIATE AS
-        SELECT product_id,
-           product_name,
-           supplier_id,
-           supplier_name FROM supplier
-        JOIN product on supplier_id = supplier
-        ORDER BY product_id;
+        SELECT P.product_id,
+           P.product_name,
+           S.supplier_id,
+           S.supplier_name FROM supplier S
+        JOIN product P on S.supplier_id = P.supplier
+        ORDER BY P.product_id;
 
 SELECT * FROM products_suppliers;
 -- add new product
