@@ -203,7 +203,7 @@ INSERT INTO employee(name, surname, password) VALUES('Sophie', 'Rodriguez', 'qkj
 INSERT INTO employee(name, surname, password) VALUES('Aleksandr', 'Verevkin', 'password123');
 
 INSERT INTO "ORDER"(invoice, employee, customer) VALUES(2491839, 2, 1);
-INSERT INTO "ORDER"(invoice, employee, customer) VALUES(202021166, 1, 1);
+INSERT INTO "ORDER"(status, invoice, employee, customer) VALUES('DELIVERING', 202021166, 2, 1);
 INSERT INTO "ORDER"(status, invoice, employee, customer) VALUES('PROCESSED', 03000852021, 1, 2);
 INSERT INTO "ORDER"(status, invoice, employee, customer) VALUES('DELIVERING', 1900001, 1, 3);
 INSERT INTO "ORDER"(status, invoice, employee, customer) VALUES('DELIVERED', 1352, 2, 4);
@@ -238,8 +238,8 @@ INSERT INTO cart_product(cart, product) VALUES (1, 3);
 INSERT INTO cart_product(cart, product) VALUES (2, 3);
 INSERT INTO cart_product(cart, product) VALUES (2, 4);
 
-INSERT INTO order_product("order", product) VALUES (3, 1);
-INSERT INTO order_product("order", product) VALUES (3, 3);
+INSERT INTO order_product("order", product) VALUES (4, 1);
+INSERT INTO order_product("order", product) VALUES (4, 3);
 INSERT INTO order_product("order", product) VALUES (2, 3);
 INSERT INTO order_product("order", product) VALUES (2, 4);
 
@@ -362,6 +362,47 @@ VALUES(5, 'good crayon', 4, 3);
 
 -- PROCEDURES --
 
+-- print out currently delivering orders and responsible for them employees
+CREATE OR REPLACE PROCEDURE delivering_orders
+AS
+    CURSOR order_cur IS SELECT * FROM "ORDER";
+    ord "ORDER"%ROWTYPE;
+    emp employee%ROWTYPE;
+    products_cnt INT;
+    empty_delivery EXCEPTION;
+    PRAGMA exception_init ( empty_delivery, -20001 );
+BEGIN
+    OPEN order_cur;
+    LOOP
+        FETCH order_cur INTO ord;
+        EXIT WHEN order_cur%NOTFOUND;
+
+        IF ord.status = 'DELIVERING' THEN
+            SELECT * INTO emp FROM employee WHERE employee_id = ord.employee;
+            SELECT COUNT(*) INTO products_cnt FROM order_product WHERE "order" = ord.order_id;
+            IF products_cnt = 0 THEN
+                RAISE empty_delivery;
+            END IF;
+            -- print summarized info
+            DBMS_OUTPUT.PUT_LINE('ORDER DATE: ' || ord.order_date || ', ' ||
+                                 'RESPONSIBLE: ' || emp.name || ' ' || emp.surname || ', ' ||
+                                 'PRODUCTS AMOUNT: ' || products_cnt);
+        END IF;
+    END LOOP;
+    CLOSE order_cur;
+    EXCEPTION WHEN empty_delivery THEN
+    BEGIN
+        DBMS_OUTPUT.put_line('Empty delivery found! ' ||
+                             'RESPONSIBLE: ' || emp.name || ' ' || emp.surname || ', ' ||
+                             'ORDER ID: ' || ord.order_id);
+    END;
+END;
+-- procedure execution
+BEGIN
+    delivering_orders;
+END;
+
+-- TODO another procedure
 
 -- EXPLAIN PLAN --
 
@@ -381,7 +422,7 @@ SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
 -- create index for product identification columns, for faster searching
 CREATE INDEX product_indentif ON product(product_id, product_name);
 -- evaluation of the same select, now with index
-EXPLAIN PLAN SET STATEMENT_ID = 'performanceAnalysisAfter' FOR
+EXPLAIN PLAN FOR
     SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM product P
     LEFT JOIN review R on P.product_id = R.product
     GROUP BY P.product_id,
@@ -393,7 +434,7 @@ SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
 
 -- PERMISSIONS --
 
-GRANT ALL PRIVILEGES ON customer TO XTSIAR00;
+GRANT ALL ON customer TO XTSIAR00;
 GRANT ALL ON "ORDER" TO XTSIAR00;
 GRANT ALL ON employee TO XTSIAR00;
 GRANT ALL ON cart TO XTSIAR00;
@@ -403,7 +444,8 @@ GRANT ALL ON review TO XTSIAR00;
 GRANT ALL ON cart_product TO XTSIAR00;
 GRANT ALL ON order_product TO XTSIAR00;
 
--- TODO GRANT EXECUTE ON $procedure TO XTSIAR00;
+GRANT EXECUTE ON delivering_orders TO XTSIAR00;
+-- TODO GRANT EXECUTE ON $another_procedure TO XTSIAR00;
 
 -- MATERIALIZED VIEW --
 
