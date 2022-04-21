@@ -166,8 +166,6 @@ CREATE TABLE cart_product (
 CREATE TABLE order_product (
 	"order"        INT NOT NULL,
 	product        INT NOT NULL,
-	CONSTRAINT order_product_primary
-		PRIMARY KEY ("order", product),
 	CONSTRAINT order_product_order_foreign
 		FOREIGN KEY ("order")
 		REFERENCES "ORDER" (order_id)
