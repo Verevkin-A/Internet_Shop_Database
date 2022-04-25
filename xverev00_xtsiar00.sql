@@ -466,3 +466,5 @@ VALUES('Red long crayon', 'Red Marking Crayon', 5, 'crayon', 'Marking', 9, 5, 'r
 COMMIT;
 -- data doesn't change
 SELECT * FROM products_suppliers;
+
+GRANT ALL ON products_suppliers TO XTSIAR00;
