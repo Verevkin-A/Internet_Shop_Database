@@ -241,81 +241,11 @@ INSERT INTO order_product("order", product) VALUES (4, 3);
 INSERT INTO order_product("order", product) VALUES (2, 3);
 INSERT INTO order_product("order", product) VALUES (2, 4);
 
--- TASK #3 -- SELECTS --
-
--- JOIN 2 tables
--- Total price of the cart and email of customers who left something in their carts
-SELECT customer_id, name, surname, email, total_price FROM customer
-    JOIN cart ON customer.customer_id = cart.customer
-    WHERE total_price <> 0
-    ORDER BY total_price DESC;
-
--- JOIN 2 tables
--- Supplier of each product
-SELECT P.product_id,
-       P.product_name,
-       S.supplier_id,
-       S.supplier_name FROM supplier S
-    RIGHT JOIN product P on S.supplier_id = P.supplier
-    ORDER BY P.product_id;
-
--- JOIN 2 tables
--- Order id and order status of customers whose id is greater than 2
-SELECT O.order_id, O.status FROM "ORDER" O
-	JOIN customer C ON C.customer_id = O.customer
-	WHERE C.customer_id > 2;
-
--- JOIN 3 tables
--- Product name, rating, id and email of customers who rated any sketchbook
-SELECT DISTINCT C.customer_id, C.email, P.product_name, R.rating FROM customer C
-    INNER JOIN review R ON C.customer_id = R.customer
-    INNER JOIN product P on R.product = P.product_id
-    WHERE P.type = 'sketchbook';
-
--- GROUP BY with aggregation function
--- How many products supply each supplier
-SELECT S.supplier_id, S.supplier_name, COUNT(P.product_id) supplied_products FROM supplier S
-    LEFT JOIN product P on S.supplier_id = P.supplier
-    GROUP BY S.supplier_id, S.supplier_name;
-	
--- GROUP BY with aggregation function
--- How many crayons supply each supplier
-SELECT S.supplier_id, S.supplier_name, COUNT(DECODE(P.type, 'crayon', 1)) supplied_products FROM supplier S
-    LEFT JOIN product P on S.supplier_id = P.supplier
-GROUP BY S.supplier_id, S.supplier_name;
-
--- GROUP BY with aggregation function
--- Top 3 products with most reviews
-SELECT P.product_id, P.product_name, COUNT(r.review_num) number_of_reviews FROM product P
-    LEFT JOIN review R on P.product_id = R.product
-    GROUP BY P.product_id, P.product_name
-    ORDER BY number_of_reviews DESC
-    FETCH FIRST 3 ROW ONLY;
-
--- EXISTS predicate
--- Employees who doesn't have any assigned products
-SELECT E.employee_id, E.name, E.surname FROM employee E
-    WHERE NOT EXISTS
-        (SELECT * FROM product P
-        WHERE P.employee = E.employee_id);
-
--- IN with nested select
--- Customers who left only 4 and 5 stars reviews
-SELECT DISTINCT C.customer_id,
-                C.name,
-                C.surname,
-                C.telephone_num,
-                C.birthdate FROM customer C
-    INNER JOIN review R ON C.customer_id = R.customer
-    WHERE C.customer_id NOT IN
-        (SELECT C.customer_id FROM CUSTOMER C
-            INNER JOIN REVIEW R ON C.customer_id = R.customer WHERE R.rating <= 3);
-
 -- TASK #4 --
 
 -- TRIGGERS --
 
--- Recount total cart price
+-- Recounts total cart price
 CREATE OR REPLACE TRIGGER update_cart_price
     BEFORE INSERT ON cart_product       -- TODO on delete?
     FOR EACH ROW
@@ -337,7 +267,7 @@ SELECT total_price FROM cart WHERE customer = 1;
 INSERT INTO cart_product(cart, product) VALUES (1, 2);
 SELECT total_price FROM cart WHERE customer = 1;
 
--- Check if user already have review on reviewed product
+-- Checks if user already have review on reviewed product
 CREATE OR REPLACE TRIGGER check_duplicate_review
     BEFORE INSERT ON review
     FOR EACH ROW
@@ -360,7 +290,7 @@ VALUES(5, 'good crayon', 4, 3);
 
 -- PROCEDURES --
 
--- print out currently delivering orders and responsible for them employees
+-- prints out currently delivering orders and responsible for them employees
 CREATE OR REPLACE PROCEDURE delivering_orders
 AS
     CURSOR order_cur IS SELECT * FROM "ORDER";
@@ -400,7 +330,20 @@ BEGIN
     delivering_orders;
 END;
 
--- TODO another procedure
+-- takes product name as argument and prints out it's supplier
+CREATE OR REPLACE PROCEDURE product_supplier (p_name IN VARCHAR)
+AS
+    sup_id INT;
+    sup_name VARCHAR(70);
+BEGIN
+    SELECT supplier INTO sup_id FROM product WHERE product_name = p_name;
+    SELECT supplier_name INTO sup_name FROM supplier WHERE supplier_id = sup_id;
+    DBMS_OUTPUT.put_line('SUPPLIER: ' || sup_name);
+END;
+
+BEGIN
+    product_supplier ('A4 sketchbook Conda');
+END;
 
 -- EXPLAIN PLAN --
 
@@ -443,7 +386,7 @@ GRANT ALL ON cart_product TO XTSIAR00;
 GRANT ALL ON order_product TO XTSIAR00;
 
 GRANT EXECUTE ON delivering_orders TO XTSIAR00;
--- TODO GRANT EXECUTE ON $another_procedure TO XTSIAR00;
+GRANT EXECUTE ON product_supplier TO XTSIAR00;
 
 -- MATERIALIZED VIEW --
 
