@@ -65,61 +65,71 @@
     při opětovném přihlášení znovu načtena. Zákazník si může zboží objednat po zadání potřebných údajů (kontakt, doprava, ...). Zákazníci mohou jednotlivé zboží hodnotit 
     a psát na něj recenze. V systému jsou uloženy také základní údaje o dodavatelích pro opětovné přiobjednání dalšího zboží. Zaměstnanci mohou nahlédnout do statistik oblíbenosti a prodejnosti zboží.
     
+\section*{Schéma databáze}
+    \begin{center}
+        \includegraphics[scale=0.19]{11.png}
+    \end{center}
+    
 \section*{1. Způsob převodu generalizace do schéma relační databáze}
-    Produktem může být pastelka nebo skicák, použili jsme \textbf{první} metodu převedení generalizace do tabulky relační databáze. Tabulka \texttt{product} obsahuje atribut \texttt{type}, který definuje typ produktu, a také všechny nutné atributy pastelky a skicáku, které jsou zpočátku nastaveny na \texttt{NULL}.
-    \\
-    \\
-    \includegraphics[scale=0.45]{10.png}
+    Produktem může být pastelka nebo skicák, použili jsme jednu tabulku pro uložení
+    obou typu produktu. Tabulka \texttt{product} obsahuje atribut \texttt{type}, který definuje typ produktu, a také všechny nutné atributy pastelky a skicáku, které jsou zpočátku nastaveny na \texttt{NULL}.
 
-\newpage
+    \begin{center}
+        \includegraphics[scale=0.45]{10.png}
+    \end{center}
+
 \section*{2. Triggery}
-    $\bullet$~ První trigger slouží k aktualizaci celkové ceny nákupního košíku. Spouští před každým vložením do košiku nových produktů. V cyklu se vypočítá celková cena košíku, přidá se cena nového produktu a aktualizuje se cena košíku
-    \\
-    \\
+\begin{itemize}
+    \item První trigger slouží k aktualizaci celkové ceny nákupního košíku. Spouští se před každým vložením do košiku nových produktů. V cyklu se vypočítá celková cena košíku, přidá se cena nového produktu a aktualizuje se cena košíku.
+\end{itemize}
     \includegraphics[scale=0.54]{1-2.png}
-    \\
-    \\
-    $\bullet$~ Druhý trigger spouští před vložením nové recenze. Zkontroluje, zda tento uživatel již má recenzi na tento produkt, pokud již existuje recenze, vypíše chybu.
-    \\
-    \\
-    \includegraphics[scale=0.6075]{3.png}
+\newpage
+\begin{itemize}
+    \item Druhý trigger spouští před vložením nové recenze. Zkontroluje, zda tento uživatel již má recenzi na tento produkt, pokud recenze již existuje, vypíše chybu.
+\end{itemize}
+\includegraphics[scale=0.6075]{3.png}
+
 
 \section*{3. Procedury}
-    $\bullet$~ První procedura zobrazuje objednávky, které jsou na cestě a zaměstnance odpovědné za jejich přepravu. Pokud je v objednávce 0 produktů, vypíše se chyba. Procedura deklaruje kurzor s příkazy, iteruje přes atributy příkazu v cyklu a vypisuje je.
-    \\
-    \\
+\begin{itemize}
+    \item První procedura zobrazuje objednávky, které jsou na cestě a zaměstnance odpovědné za jejich doručení. Pokud je v objednávce 0 produktů, vypíše se chyba. Procedura deklaruje kurzor s příkazy, iteruje přes atributy příkazu v cyklu a vypisuje je.
+\end{itemize}
     \includegraphics[scale=0.66]{4.png}
-    \\
-    \\
-    $\bullet$~ Druhá procedura vezme název produktu jako argument a vytiskne jeho dodavatele. 
-    \\
-    \\
-    \includegraphics[scale=0.66]{5.png}
+\begin{itemize}
+    \item Druhá procedura vezme název produktu jako argument a vytiskne jeho dodavatele.
+    \begin{center}
+        \includegraphics[scale=0.66]{5.png}
+        \includegraphics[scale=0.825]{6.png}
+    \end{center}
+\end{itemize}
 
-    \includegraphics[scale=0.825]{6.png}
+ \section*{4. Přístupová práva}
+    Přístupová práva byla předana postupně pomocí příkazu \texttt{GRANT ALL} pro databázové \mbox{tabulky} a \texttt{GRANT EXECUTE} pro procedury.
 
-\section*{4. Explain plan}
-    EXPLAIN PLAN se spouští dvakrát pro stejný select, který zobrazuje množství recenzí na každý produkt.\\
-    $\bullet$~ Po spuštění EXPLAIN PLANu je vidět provedené operace, jejich cena a čas.
-    \\
-    \\
-    \includegraphics[scale=0.38]{7.png}
-    \\
-    \\
-    $\bullet$~ Pro zrychlení selectu a snížení ceny byl vytvořen index \texttt{product indentif}, který obsahuje id produktu a jeho název. Po spuštění EXPLAIN PLAN je vidět, že select neprochází celou tabulku a používá index, což urychluje vyhledávací operace.
-    \\
-    \\
-    \includegraphics[scale=0.405]{8.png}
-
- \section*{5. Přístupová práva}
-    $\bullet$~ Přístupová práva byla předana postupně pomocí příkazu \texttt{GRANT ALL ON} pro databázové tabulky a \texttt{GRANT EXECUTE ON} pro procedury.
-
+\section*{5. Explain plan}
+    EXPLAIN PLAN se spouští dvakrát pro stejný select, který zobrazuje množství recenzí pro každý produkt.
+    \newpage
+    \begin{itemize}
+        \item Po spuštění EXPLAIN PLAN, je vidět provedené operace, jejich cenu a čas.
+        \small
+    \end{itemize}
+        \begin{center}
+            \includegraphics[scale=0.38]{7.png}
+        \end{center}
+    \begin{itemize}
+        \item Pro zrychlení selectu a snížení ceny byl vytvořen index \texttt{product indentif}, který obsahuje id produktu a jeho název. Po spuštění EXPLAIN PLAN je vidět, že select neprochází celou tabulku a používá index, což urychluje vyhledávací operace.
+    \end{itemize}
+    \begin{center}
+        \includegraphics[scale=0.405]{8.png}
+    \end{center}
+ 
+\newpage
 \section*{6. Materializovaný pohled}
-    $\bullet$~ Materializovaný pohled byl vytvořen s produkty a jejich dodavateli. Pohled je uložen v paměti a při přidávání nových produktů se nemění, takže stav tabulky ukládáme pro případné další použití. Pro změnu dát je nutné použit \texttt{REFRESH FAST ON COMMIT}.
-    \\
-    \\
-    \includegraphics[scale=0.4936]{9.png}
-    \\
-    \\
+\indent Materializovaný pohled byl vytvořen s produkty a jejich dodavateli. Pohled je uložen v paměti a při přidávání nových produktů se nemění, takže stav tabulky je uložen pro případné další použití.
+    
+    \begin{center}
+        \includegraphics[scale=0.4936]{9.png}
+    \end{center}
+
     Materializovaný pohled patří druhému členu týmu (xtsiar00) a používá tabulky definované prvním členem týmu (xverev00).
 \end{document}
