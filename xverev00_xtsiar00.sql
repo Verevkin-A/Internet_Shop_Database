@@ -246,7 +246,7 @@ INSERT INTO order_product("order", product) VALUES (2, 4);
 
 -- Recounts total cart price
 CREATE OR REPLACE TRIGGER update_cart_price
-    BEFORE INSERT ON cart_product       -- TODO on delete?
+    BEFORE INSERT ON cart_product
     FOR EACH ROW
 DECLARE
     cart_total INT;
@@ -391,7 +391,7 @@ GRANT EXECUTE ON product_supplier TO XTSIAR00;
 DROP MATERIALIZED VIEW products_suppliers;
 
 -- Products and their suppliers
--- calls and uses the second member of the team
+-- called and used by the second member of the team
 CREATE MATERIALIZED VIEW products_suppliers
     BUILD IMMEDIATE AS
         SELECT P.product_id,
