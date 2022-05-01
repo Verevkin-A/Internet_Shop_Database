@@ -283,9 +283,9 @@ END;
 -- creating review on product
 INSERT INTO review(rating, content, customer, product)
 VALUES(4, 'nice crayon', 4, 3);
--- error on attempt of creating new review on the same product
-INSERT INTO review(rating, content, customer, product)
-VALUES(5, 'good crayon', 4, 3);
+-- error on attempt of creating new review on the same product (uncomment for demonstration)
+-- INSERT INTO review(rating, content, customer, product)
+-- VALUES(5, 'good crayon', 4, 3);
 
 -- PROCEDURES --
 
