@@ -12,7 +12,6 @@ DROP TABLE supplier CASCADE CONSTRAINTS PURGE;
 DROP TABLE review CASCADE CONSTRAINTS PURGE;
 DROP TABLE cart_product CASCADE CONSTRAINTS PURGE;
 DROP TABLE order_product CASCADE CONSTRAINTS PURGE;
-DROP MATERIALIZED VIEW products_suppliers;
 
 --Create customer table
 CREATE TABLE customer (
@@ -389,10 +388,10 @@ GRANT EXECUTE ON delivering_orders TO XTSIAR00;
 GRANT EXECUTE ON product_supplier TO XTSIAR00;
 
 -- MATERIALIZED VIEW --
-
 DROP MATERIALIZED VIEW products_suppliers;
 
 -- Products and their suppliers
+-- calls and uses the second member of the team
 CREATE MATERIALIZED VIEW products_suppliers
     BUILD IMMEDIATE AS
         SELECT P.product_id,
@@ -409,5 +408,3 @@ VALUES('Red long crayon', 'Red Marking Crayon', 5, 'crayon', 'Marking', 9, 5, 'r
 COMMIT;
 -- data doesn't change
 SELECT * FROM products_suppliers;
-
-GRANT ALL ON products_suppliers TO XTSIAR00;
