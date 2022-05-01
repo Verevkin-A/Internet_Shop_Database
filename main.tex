@@ -57,7 +57,13 @@
 \newpage
 
 \section*{Zádaní}
-    Cílem je vytvoření jednoduché aplikace pro internetový obchod s pastelkami a skicáky. Návštěvníci si mohou pomocí internetového rozhraní prohlížet veškerý sortiment obchodu. Pastelky mohou lišit podle typu (obyčejné, progresso, voskovky, ...) a délky, počtu pastelek v balení, atd. Skicáky se dělí podle gramáže, velikosti, počtu papírů, apod. Pokud má návštěvník zájem o určitý produkt/y, může si jej vybrat (vložením do nákupního košíku). U registrovaných zákazníků, kteří jsou do systému přihlášeni, zůstává informace o vybraném zboží v košíku uložena a při opětovném přihlášení znovu načtena. Zákazník si může zboží objednat po zadání potřebných údajů (kontakt, doprava, ...). Zákazníci mohou jednotlivé zboží hodnotit a psát na něj recenze. V systému jsou uloženy také základní údaje o dodavatelích pro opětovné přiobjednání dalšího zboží. Zaměstnanci mohou nahlédnout do statistik oblíbenosti a prodejnosti zboží.
+    \indent Cílem je vytvoření jednoduché aplikace pro internetový obchod s pastelkami
+    a skicáky. Návštěvníci si mohou pomocí internetového rozhraní prohlížet veškerý 
+    sortiment obchodu. Pastelky mohou lišit podle typu (obyčejné, progresso,
+    voskovky, ...) a délky, počtu pastelek v balení, atd. Skicáky se dělí podle gramáže, velikosti, počtu papírů, apod. Pokud má návštěvník zájem o určitý produkt/y, 
+    může si jej vybrat (vložením do nákupního košíku). U registrovaných zákazníků, kteří jsou do systému přihlášeni, zůstává informace o vybraném zboží v košíku uložena a 
+    při opětovném přihlášení znovu načtena. Zákazník si může zboží objednat po zadání potřebných údajů (kontakt, doprava, ...). Zákazníci mohou jednotlivé zboží hodnotit 
+    a psát na něj recenze. V systému jsou uloženy také základní údaje o dodavatelích pro opětovné přiobjednání dalšího zboží. Zaměstnanci mohou nahlédnout do statistik oblíbenosti a prodejnosti zboží.
     
 \section*{1. Způsob převodu generalizace do schéma relační databáze}
     Produktem může být pastelka nebo skicák, použili jsme \textbf{první} metodu převedení generalizace do tabulky relační databáze. Tabulka \texttt{product} obsahuje atribut \texttt{type}, který definuje typ produktu, a také všechny nutné atributy pastelky a skicáku, které jsou zpočátku nastaveny na \texttt{NULL}.
